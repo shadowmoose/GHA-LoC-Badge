@@ -1,0 +1,11 @@
+{
+  "name": "LoC-Badge",
+  "version": "1.0.0",
+  "dependencies": {
+    "glob": "^7.1.6",
+    "micromatch": "^4.0.2"
+  },
+  "devDependencies": {
+    "badgen": "^3.0.1"
+  }
+}
