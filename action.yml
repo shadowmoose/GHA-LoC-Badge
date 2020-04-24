@@ -49,7 +49,9 @@ outputs:
   elapsed_ms:
     description: 'The time that this scan took.'
   output_path:
-    description: 'The path to the SVG that was generated.'
+    description: 'The absolute path to the SVG that was generated.'
+  output_dir:
+    description: 'The absolute path to the directory that contains the output svg.'
 
 runs:
   using: 'node12'

@@ -2,7 +2,6 @@ const { badgen } = require('badgen');
 const { isMatch } = require('micromatch');
 const fs = require('fs').promises;
 const path = require('path');
-const github = require('@actions/github');
 const core = require('@actions/core');
 
 
@@ -139,7 +138,10 @@ getFiles(dir, patterns, ignore).then( async ret => {
 	core.setOutput("ignored_files", `${ret.ignored}`);
 	core.setOutput("counted_files", `${ret.counted}`);
 	core.setOutput("elapsed_ms", `${Date.now() - st}`);
-	core.setOutput("output_path", `${badge}`);
+	core.setOutput("output_path", `${path.resolve(badge)}`);
+	core.setOutput("output_dir", `${path.resolve(path.dirname(badge))}`);
+
+	await fs.mkdir(path.dirname(badge), { recursive: true })
 
 	await fs.writeFile(badge, makeBadge(ret.lines.toLocaleString(), badgeOpts));
 })
