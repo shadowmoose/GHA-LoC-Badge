@@ -2,7 +2,8 @@ const { badgen } = require('badgen');
 const { isMatch } = require('micromatch');
 const fs = require('fs').promises;
 const path = require('path');
-
+const github = require('@actions/github');
+const core = require('@actions/core');
 
 
 async function isDir (path) {
@@ -45,12 +46,11 @@ const countThrottled = throttle(countLines, 10);
  * @param patterns {string[]} array of patterns to match against.
  * @param negative {string[]} array of patterns to NOT match against.
  * @param oBase {string|null} Leave as null, used internally for recursion.
- * @return {Promise<{ignored: number, lines: number}>} An array of all files located, as absolute paths.
+ * @return {Promise<{ignored: number, lines: number, counted: number}>} An array of all files located, as absolute paths.
  */
 async function getFiles (dir, patterns = [], negative = [], oBase=null) {
 	const subDirs = await fs.readdir(dir);
 	const base = oBase || dir;
-	if (!patterns.length) patterns.push('.');
 	let lines = 0, ignored=0, counted=0;
 	await Promise.all(subDirs.map(async (subdir) => {
 		const fullPath = path.resolve(dir, subdir);
@@ -61,10 +61,14 @@ async function getFiles (dir, patterns = [], negative = [], oBase=null) {
 			counted += res.counted;
 		} else {
 			const np = norm(base, fullPath);
-			if (isMatch(np, patterns) && !isMatch(np, negative)) {
-				if (process.env.DEBUG_LOGGING) console.log('Counting:', np)
-				lines += await countThrottled(fullPath);
-				counted++;
+			if ((!patterns.length || isMatch(np, patterns)) && !isMatch(np, negative)) {
+				if (core.isDebug()) core.debug(`Counting:${np}`);
+				try {
+					lines += await countThrottled(fullPath);
+					counted++;
+				} catch (err) {
+					core.error(err);
+				}
 			} else {
 				ignored++;
 			}
@@ -95,17 +99,17 @@ function throttle(callback, limit=5) {
 
 
 function makeBadge(text, config) {
-	let { ignore, label, color, style, scale, labelColor } = (config || {});
+	let { label, color, style, scale, labelcolor } = (config || {});
 	label = label || 'Lines of Code';
 	color = color || 'blue';
-	labelColor = labelColor || '555';
+	labelcolor = labelcolor || '555';
 	style = style || 'classic';
 	scale = scale? parseInt(scale) : 1;
 
 	// only `status` is required.
 	return badgen({
 		label: `${label}`,     // <Text>
-		labelColor,                     // <Color RGB> or <Color Name> (default: '555')
+		labelcolor,                     // <Color RGB> or <Color Name> (default: '555')
 		status: `${text}`,               // <Text>, required
 		color,    // <Color RGB> or <Color Name> (default: 'blue')
 		style,    // 'flat' or 'classic' (default: 'classic')
@@ -115,9 +119,27 @@ function makeBadge(text, config) {
 
 
 const st = Date.now();
-getFiles('../', ['**.js', '**.py'], ['**/node_modules/**']).then( async ret => {
-	console.log('Returned:', ret)
-	console.log('Took:', Date.now() - st);
+const dir = core.getInput('directory') || './';
+const badge = core.getInput('badge') || './badge.svg';
+const patterns = (core.getInput('patterns')||'').split('|').map(s => s.trim()).filter(s=>s);
+const ignore = (core.getInput('ignore') || '').split('|').map(s => s.trim()).filter(s=>s);
 
-	await fs.writeFile('./badge.svg', makeBadge(ret.lines.toLocaleString()));
+const badgeOpts = {};
+for (const en of Object.keys(process.env)) {
+	if (en.startsWith('INPUT_BADGE_')) {
+		badgeOpts[en.replace('INPUT_BADGE_', '').toLowerCase()] = process.env[en]
+	}
+}
+
+getFiles(dir, patterns, ignore).then( async ret => {
+	core.info(`Counted ${ret.lines} Lines from ${ret.counted} Files, ignoring ${ret.ignored} Files.`)
+	core.info(`Took: ${Date.now() - st}`);
+
+	core.setOutput("total_lines", `${ret.lines}`);
+	core.setOutput("ignored_files", `${ret.ignored}`);
+	core.setOutput("counted_files", `${ret.counted}`);
+	core.setOutput("elapsed_ms", `${Date.now() - st}`);
+	core.setOutput("output_path", `${badge}`);
+
+	await fs.writeFile(badge, makeBadge(ret.lines.toLocaleString(), badgeOpts));
 })
