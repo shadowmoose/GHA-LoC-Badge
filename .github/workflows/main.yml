@@ -23,11 +23,13 @@ jobs:
           echo "Line Count: ${{ steps.badge.outputs.total_lines }}";
 
       - name: Deploy to image-data branch
-        uses: peaceiris/actions-gh-pages@v2.9.0
+        uses: peaceiris/actions-gh-pages@v3
         env:
           ACTIONS_DEPLOY_KEY: ${{ secrets.ACTIONS_DEPLOY_KEY }}
           PUBLISH_BRANCH: image-data
           PUBLISH_DIR: ./output
         with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           username: "shadow-bot"
           useremail: "github_bot@github.com"
+
