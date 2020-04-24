@@ -28,5 +28,5 @@ jobs:
           publish_dir: ./output
           publish_branch: image-data
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          username: "shadow-bot"
-          useremail: "github_bot@github.com"
+          user_name: 'github-actions[bot]'
+          user_email: 'github-actions[bot]@users.noreply.github.com'
