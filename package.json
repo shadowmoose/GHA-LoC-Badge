@@ -1,13 +1,13 @@
 {
-  "name": "LoC-Badge",
+  "name": "gha-loc-badge",
   "version": "1.0.0",
+  "license": "MIT",
+  "repository": "https://github.com/shadowmoose/LoC-Badge",
   "dependencies": {
     "@actions/core": "^1.2.3",
     "@actions/github": "^2.1.1",
     "glob": "^7.1.6",
-    "micromatch": "^4.0.2"
-  },
-  "devDependencies": {
+    "micromatch": "^4.0.2",
     "badgen": "^3.0.1"
   }
 }
