@@ -12,7 +12,7 @@ inputs:
   patterns:
     description: 'The file patterns to search for, separated by pipes ("|").'
     required: false
-    default: "**"
+    default: ""
   ignore:
     description: 'The file patterns to ignore, even if they matched "patterns", separated by pipes ("|").'
     required: false
@@ -53,4 +53,4 @@ outputs:
 
 runs:
   using: 'node12'
-  main: 'index.js'
+  main: './src/index.js'
