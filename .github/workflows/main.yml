@@ -15,6 +15,7 @@ jobs:
         with:
           directory: ./
           badge: ./output/badge.svg
+          ignore: '**node_modules/**'
 
       - name: Print the output
         run: |
