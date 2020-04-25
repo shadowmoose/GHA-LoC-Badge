@@ -3,7 +3,7 @@ description: 'Generate a badge to display total Lines of Code'
 inputs:
   directory:
     description: 'The directory to scan.'
-    required: true
+    required: false
     default: './'
   badge:
     description: 'The output path to save the badge svg - including extension!'
@@ -46,8 +46,6 @@ inputs:
 outputs:
   total_lines:
     description: 'The total line count.'
-  ignored_files:
-    description: 'A count of all files that were matched, but then excluded by ignore patterns.'
   counted_files:
     description: 'A count of all files that were included in the total.'
   elapsed_ms:
