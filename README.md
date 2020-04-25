@@ -1,4 +1,4 @@
-# LoC-Badge
+# LoC-Badge ![Generated Button](https://raw.githubusercontent.com/shadowmoose/GHA-LoC-Badge/image-data/badge.svg)
 Count project Lines of Code & generate a badge for display.
 
 ## To use:
