@@ -5,6 +5,22 @@ const path = require('path');
 const core = require('@actions/core');
 
 
+const st = Date.now();
+const dir = core.getInput('directory') || './';
+const debug = core.getInput('debug') === 'true';
+const badge = core.getInput('badge') || './badge.svg';
+const patterns = (core.getInput('patterns')||'').split('|').map(s => s.trim()).filter(s=>s);
+const ignore = (core.getInput('ignore') || '').split('|').map(s => s.trim()).filter(s=>s);
+
+const badgeOpts = {};
+for (const en of Object.keys(process.env)) {
+	if (en.startsWith('INPUT_BADGE_')) {
+		badgeOpts[en.replace('INPUT_BADGE_', '').toLowerCase()] = process.env[en]
+	}
+}
+
+
+
 async function isDir (path) {
 	const stats = await fs.stat(path);
 	return stats.isDirectory();
@@ -61,7 +77,7 @@ async function getFiles (dir, patterns = [], negative = [], oBase=null) {
 		} else {
 			const np = norm(base, fullPath);
 			if ((!patterns.length || isMatch(np, patterns)) && !isMatch(np, negative)) {
-				if (core.isDebug()) core.debug(`Counting:${np}`);
+				if (debug) core.debug(`Counting:${np}`);
 				try {
 					lines += await countThrottled(fullPath);
 					counted++;
@@ -116,19 +132,6 @@ function makeBadge(text, config) {
 	});
 }
 
-
-const st = Date.now();
-const dir = core.getInput('directory') || './';
-const badge = core.getInput('badge') || './badge.svg';
-const patterns = (core.getInput('patterns')||'').split('|').map(s => s.trim()).filter(s=>s);
-const ignore = (core.getInput('ignore') || '').split('|').map(s => s.trim()).filter(s=>s);
-
-const badgeOpts = {};
-for (const en of Object.keys(process.env)) {
-	if (en.startsWith('INPUT_BADGE_')) {
-		badgeOpts[en.replace('INPUT_BADGE_', '').toLowerCase()] = process.env[en]
-	}
-}
 
 getFiles(dir, patterns, ignore).then( async ret => {
 	core.info(`Counted ${ret.lines} Lines from ${ret.counted} Files, ignoring ${ret.ignored} Files.`)

@@ -37,6 +37,10 @@ inputs:
     description: "The color to use for this badge label."
     required: false
     default: "555"
+  debug:
+    description: 'Enable debug logging'
+    required: false
+    default: 'false'
 
 
 outputs:

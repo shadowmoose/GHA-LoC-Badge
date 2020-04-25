@@ -13,6 +13,7 @@ jobs:
         uses: ./ # Uses an action in the root directory
         id: badge
         with:
+          debug: true
           directory: ./
           badge: ./output/badge.svg
           ignore: '**node_modules/**'
