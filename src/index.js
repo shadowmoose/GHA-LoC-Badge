@@ -19,7 +19,7 @@ for (const en of Object.keys(process.env)) {
 	}
 }
 
-
+if (debug) core.info('Debugging enabled.');
 
 async function isDir (path) {
 	const stats = await fs.stat(path);
