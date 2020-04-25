@@ -65,9 +65,10 @@ async function getFiles (dir, patterns = [], negative = []) {
 				return await countThrottled(f);
 			} catch (err) {
 				core.error(err);
+				return 0;
 			}
 		}))
-	}).then(res => res.map(r => counted += r));
+	}).then(res => res.map(r => lines += r));
 
 	return { lines, ignored, counted };
 }
