@@ -77,7 +77,7 @@ async function getFiles (dir, patterns = [], negative = [], oBase=null) {
 		} else {
 			const np = norm(base, fullPath);
 			if ((!patterns.length || isMatch(np, patterns)) && !isMatch(np, negative)) {
-				if (debug) core.debug(`Counting:${np}`);
+				if (debug) core.info(`Counting:${np}`);
 				try {
 					lines += await countThrottled(fullPath);
 					counted++;
