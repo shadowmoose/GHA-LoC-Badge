@@ -6,7 +6,7 @@ In a Github Action, download your project and run this action:
 
 ```yaml
       - name: Launch the local action
-        uses: ./ # Uses an action in the root directory
+        uses: shadowmoose/GHA-LoC-Badge@1.0.0
         id: badge
         with:
           debug: true
