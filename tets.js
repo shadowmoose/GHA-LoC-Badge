@@ -23,4 +23,4 @@ async function getFiles (dir, patterns = [], negative = []) {
 	return { lines, ignored, counted };
 }
 
-getFiles('./', ['**'], ['node_modules']).then(console.log)
+getFiles('./', ['**'], []).then(console.log)

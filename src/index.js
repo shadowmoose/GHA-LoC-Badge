@@ -31,6 +31,7 @@ async function countLines(fullPath) {
 				while((index = chunk.indexOf(10, index + 1)) > -1) count++
 			})
 			.on('end', function() {
+				if (debug) core.info(`Counted file "${fullPath} as ${count} lines.`)
 				res(count);
 			})
 			.on('error', function(err) {
