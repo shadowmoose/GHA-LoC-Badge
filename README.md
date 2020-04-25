@@ -5,7 +5,7 @@ Count project Lines of Code & generate a badge for display.
 In a Github Action, download your project and run this action:
 
 ```yaml
-      - name: Launch the local action
+      - name: Make Code Badge
         uses: shadowmoose/GHA-LoC-Badge@1.0.0
         id: badge
         with:
