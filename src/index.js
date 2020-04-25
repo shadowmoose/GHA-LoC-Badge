@@ -58,16 +58,16 @@ async function getFiles (dir, patterns = [], negative = []) {
 		ignore: negative,
 		nodir: true
 	}).then(files => {
+		counted = files.length;
 		return Promise.all(files.map( async f => {
 			try {
 				if (debug) core.info(`Counting: ${f}`);
-				lines += await countThrottled(f);
-				counted ++;
+				return await countThrottled(f);
 			} catch (err) {
 				core.error(err);
 			}
 		}))
-	});
+	}).then(res => res.map(r => counted += r));
 
 	return { lines, ignored, counted };
 }
